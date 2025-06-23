@@ -1,21 +1,47 @@
 import Users from './components/Users';
-import { UserButtons } from './components/UserButtons';
+import { UserCreateButton } from './components/UserCreateButton';
 import './App.css';
 //import data from './data.json';
 
 function App() {
-  const handleCreateUser = () => {
-    //const newUser = { id: Date.now(), name: 'New User', email: 'newuser@example.com' }; // Replace with actual user data
-    //const updatedUsers = [...data.users, newUser];
-    //data.users = updatedUsers;
-    //console.log('User created successfully:', newUser);
+  const handleCreateUser = (name , email) => {
+    const newUser = {
+      id: Date.now(), // Generate a unique ID using the current timestamp
+      name,
+      email
+    };
+
+    fetch('http://localhost:3001/addUser', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newUser),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('User added successfully:', data);
+    })
+    .catch(error => {
+      console.error('Error adding user:', error);
+    });
   };
 
-  const handleRemoveUser = () => {
-    //const userIdToRemove = 1; // Replace with the actual user ID you want to remove
-    //const updatedUsers = data.users.filter(user => user.id !== userIdToRemove);
-    //data.users = updatedUsers;
-    //console.log('User removed successfully:', userIdToRemove);
+  const handleRemoveUser = (userId) => {
+    fetch('http://localhost:3001/removeUser', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('User removed successfully:', data);
+    })
+    .catch(error => {
+      console.error('Error removing user:', error);
+    });
   };
 
   return (
@@ -25,9 +51,9 @@ function App() {
           User Agent
         </div>
       </header>
-      <div className="flex justify-center items-center h-screen flex-col">
-        <Users />
-        <UserButtons onCreate={handleCreateUser} onRemove={handleRemoveUser} />
+      <div>
+        <Users onRemove={handleRemoveUser} />
+        <UserCreateButton onCreate={handleCreateUser} />
       </div>
     </div>
   );
